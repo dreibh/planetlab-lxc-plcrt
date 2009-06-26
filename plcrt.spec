@@ -6,7 +6,7 @@
 
 %define name plcrt
 %define version 1.0
-%define taglevel 1
+%define taglevel 0
 
 %define release %{taglevel}%{?pldistro:.%{pldistro}}%{?date:.%{date}}
 
@@ -34,8 +34,6 @@ Requires: myplc
 PLCRT is a collection of configuration scripts for configuring RT.
 By default RT does not come with all the settings needed for a standard PLC,
 or PlanetLab in particular.  
-
-
 
 %prep
 %setup -q
