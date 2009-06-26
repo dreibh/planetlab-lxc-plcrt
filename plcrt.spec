@@ -13,6 +13,7 @@
 Name: %{name}
 Version: %{version}
 Release: %{release}
+Source0: %{name}-%{version}.tar.bz2
 License: GPL
 Group: Applications/System
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
@@ -24,20 +25,16 @@ URL: %(echo %{url} | cut -d ' ' -f 2)
 
 Summary: PLCRT account initialization for the root image.
 Group: Applications/System
+Requires: python
+Requires: perl
+Requires: rt3
+Requires: myplc
 
 %description
 PLCRT is a collection of configuration scripts for configuring RT.
 By default RT does not come with all the settings needed for a standard PLC,
 or PlanetLab in particular.  
 
-%package 
-Summary: PLCRT Setup scripts for RT3
-Group: Applications/System
-
-Requires: python
-Requires: perl
-Requires: rt3
-Requires: myplc
 
 
 %prep
