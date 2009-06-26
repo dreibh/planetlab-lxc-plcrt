@@ -6,7 +6,7 @@
 
 %define name plcrt
 %define version 1.0
-%define taglevel 0
+%define taglevel 1
 
 %define release %{taglevel}%{?pldistro:.%{pldistro}}%{?date:.%{date}}
 
@@ -75,5 +75,8 @@ plc-config --save /etc/planetlab/default_config.xml \
 			--category plc_rt --variable enabled --value true
 
 %changelog
+* Fri Jun 26 2009 Stephen Soltesz <soltesz@cs.princeton.edu> - PLCRT-1.0-1
+- trying to get the tag to work for new package.
+
 * Thu Jun 26 2009 Stephen Soltesz <soltesz@cs.princeton.edu> - PLCRT-1.0-1
 - initial addition.
