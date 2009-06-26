@@ -52,7 +52,7 @@ echo " * Installing cron scripts"
 install -D -m 644 rt.cron $RPM_BUILD_ROOT/%{_sysconfdir}/cron.d/rt.cron
 
 chmod 755 $RPM_BUILD_ROOT/%{_datadir}/%{name}/adduserstort.pl
-chmod 755 $RPM_BUILD_ROOT/%{_datadir}/%{name}/rtcron.d/*.sh
+chmod 755 $RPM_BUILD_ROOT/%{_datadir}/%{name}/cron.d/*.sh
 
 %clean
 rm -rf $RPM_BUILD_ROOT
