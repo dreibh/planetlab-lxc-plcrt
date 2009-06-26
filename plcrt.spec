@@ -59,7 +59,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %files 
 %defattr(-,root,root)
-%config /etc/rt3/RT_SiteConfig.pm
 #%config /etc/plcrt.conf
 %{_datadir}/%{name}
 %{_sysconfdir}/plc.d/plcrt
