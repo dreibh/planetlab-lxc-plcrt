@@ -28,6 +28,7 @@ Group: Applications/System
 Requires: python
 Requires: perl
 Requires: rt3
+Requires: rt3-mailgate
 Requires: myplc
 
 %description
@@ -71,8 +72,9 @@ if ! grep '<category id="plc_rt">' /etc/planetlab/default_config.xml ; then
     sed -i 's|<category id="plc_net">| <category id="plc_rt">\n <name>RT Configuration</name>\n <description>RT</description>\n <variablelist>\n <variable id="enabled" type="boolean">\n <name>Enabled</name>\n <value>false</value>\n <description>Enable on this machine.</description>\n </variable>\n <variable id="host" type="hostname">\n <name>Hostname</name>\n <value>localhost.localdomain</value>\n <description>The fully qualified hostname.</description>\n </variable>\n <variable id="ip" type="ip">\n <name>IP Address</name>\n <value/>\n <description>The IP address of the RT server.</description>\n </variable>\n </variablelist>\n </category>\n <category id="plc_net">|' /etc/planetlab/default_config.xml
 fi
 
-plc-config --save /etc/planetlab/default_config.xml \
-			--category plc_rt --variable enabled --value true
+mkdir -p /etc/planetlab/configs
+plc-config --save /etc/planetlab/configs/site.xml \
+		--category plc_rt --variable enabled --value true
 
 %changelog
 * Fri Jun 26 2009 Stephen Soltesz <soltesz@cs.princeton.edu> - PLCRT-1.0-1
