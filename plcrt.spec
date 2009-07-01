@@ -6,7 +6,7 @@
 
 %define name plcrt
 %define version 1.0
-%define taglevel 1
+%define taglevel 2
 
 %define release %{taglevel}%{?pldistro:.%{pldistro}}%{?date:.%{date}}
 
@@ -81,6 +81,11 @@ touch /var/log/rt3/rt.log
 chown apache.apache /var/log/rt3/rt.log
 
 %changelog
+* Tue Jun 30 2009 Stephen Soltesz <soltesz@cs.princeton.edu> - PLCRT-1.0-2
+- improved init setup
+- added plcsh version of getadmins script to add users to RT's db.
+- improved %post code for installation
+
 * Fri Jun 26 2009 Stephen Soltesz <soltesz@cs.princeton.edu> - PLCRT-1.0-1
 - trying to get the tag to work for new package.
 
