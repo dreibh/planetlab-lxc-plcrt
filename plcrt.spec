@@ -76,6 +76,10 @@ mkdir -p /etc/planetlab/configs
 plc-config --save /etc/planetlab/configs/site.xml \
 		--category plc_rt --variable enabled --value true
 
+mkdir -p /var/log/rt3
+touch /var/log/rt3/rt.log
+chown apache.apache /var/log/rt3/rt.log
+
 %changelog
 * Fri Jun 26 2009 Stephen Soltesz <soltesz@cs.princeton.edu> - PLCRT-1.0-1
 - trying to get the tag to work for new package.

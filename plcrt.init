@@ -49,7 +49,7 @@ function check_pg_hba ()
 	CONF=$PGDATA/pg_hba.conf.d/${NAME}.conf
 	if [ ! -f $CONF ] ; then
 		echo "host $NAME $USER 127.0.0.1/32 password"   > $CONF
-		echo "host $NAME $USER $PLC_MONITOR_IP/32 password" >> $CONF
+		echo "host $NAME $USER $PLC_RT_IP/32 password" >> $CONF
 
 		WROTE_PG_CONFIG="true"
 	fi
@@ -238,7 +238,7 @@ case "$1" in
 		rm -f /etc/rt3/RT_SiteConfig.pm
 		rm -f /etc/rt3/initialdata
 		PATTERN="host all postgres 127.0.0.1/32 trust"
-		sed -i -e "s|$PATTERN||g" $PGDATA/pg_hba.conf.d/${RT3_DB_NAME}.conf
+		rm -f $PGDATA/pg_hba.conf.d/${RT3_DB_NAME}.conf
 
 		sed -i -e "s/.*mailgate.*//g" /etc/aliases
 		rm -f /etc/rt3/setup.finished
