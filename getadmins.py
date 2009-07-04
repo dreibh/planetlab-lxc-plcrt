@@ -1,8 +1,10 @@
 #!/bin/env plcsh
 
+import sys
+
 p = GetPersons(None, ['email', 'first_name', 'last_name', 'roles', 'site_ids'])
 
-admins = filter(lambda x: 'admin' in x['roles'], p)
+admins = filter(lambda x: sys.argv[1] in x['roles'], p)
 
 for a in admins:
 	s = GetSites(a['site_ids'], ['name'])
