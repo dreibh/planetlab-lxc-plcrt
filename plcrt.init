@@ -232,7 +232,18 @@ case "$1" in
 		check_rt_sendmail
 		check_rt_custom		# todo: restart httpd if needed.
 
-		# TODO: remove external permission
+		# NOTE: remove external permission
+		# This is needed to allow it to run without localhost
+		# TODO: find a better way to do this.
+
+		# remove 'trust' entry from .conf file
+		sed -i -e "s/.*trust//g" $PGDATA/pg_hba.conf.d/${RT3_DB_NAME}.conf
+		if [ -n "$WROTE_PG_CONFIG" ] ; then
+			# NOTE: restart db to enable access by users granted above.
+			service plc restart postgresql
+			MESSAGE=$"Bootstrap RT 3 (please wait...)"
+			dialog "$MESSAGE"
+		fi
 
 		result "$MESSAGE"
 	;;
