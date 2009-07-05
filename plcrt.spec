@@ -6,7 +6,7 @@
 
 %define name plcrt
 %define version 1.0
-%define taglevel 2
+%define taglevel 3
 
 %define release %{taglevel}%{?pldistro:.%{pldistro}}%{?date:.%{date}}
 
@@ -92,6 +92,11 @@ touch /var/log/rt3/rt.log
 chown apache.apache /var/log/rt3/rt.log
 
 %changelog
+* Sat Jul 04 2009 Stephen Soltesz <soltesz@cs.princeton.edu> - PLCRT-1.0-3
+- renamed getpersons.py to accept a given 'role'
+- changed syncadmins.sh to use callplcsh.py
+- added callplcsh.py to allow either a local or remote plc using plcsh
+
 * Tue Jun 30 2009 Stephen Soltesz <soltesz@cs.princeton.edu> - PLCRT-1.0-2
 - improved init setup
 - added plcsh version of getadmins script to add users to RT's db.
