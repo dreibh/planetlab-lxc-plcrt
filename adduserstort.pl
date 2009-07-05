@@ -46,7 +46,7 @@ foreach $bc_user (@raw_data)
   $UserObj->Create(Name => $email_address,
              RealName => $realname,
              EmailAddress => $email_address,
-             Password => 'tpdemo2009',
+             Password => 'default2009',
              Organization => $organization,
              Privileged => $priv);
              #Address1 => $address1,

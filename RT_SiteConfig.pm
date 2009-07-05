@@ -47,7 +47,7 @@ Set($DatabaseRTHost , 'localhost');
 Set($WebPath , "/rt3"); # e.g. Set($WebPath , "");
 
 #URL
-Set($WebBaseURL , "https://PLC_RT_HOSTNAME"); # Set($WebBaseURL , "http://rt.PLC_RT_HOSTNAME");
+Set($WebBaseURL , "http://PLC_RT_HOSTNAME"); # Set($WebBaseURL , "http://rt.PLC_RT_HOSTNAME");
 
 #Adding plugins
 #Set(@Plugins,qw(RT::FM));

@@ -1,4 +1,4 @@
 #!/bin/bash
 
 RTDIR=/usr/share/plcrt
-${RTDIR}/getadmins.py | ${RTDIR}/adduserstort.pl priv -
+${RTDIR}/callplcsh.py ${RTDIR}/getadmins.py admin | ${RTDIR}/adduserstort.pl priv -

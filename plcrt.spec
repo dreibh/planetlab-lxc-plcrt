@@ -69,12 +69,23 @@ if grep 'pam_loginuid.so' /etc/pam.d/crond ; then
 fi
 
 if ! grep '<category id="plc_rt">' /etc/planetlab/default_config.xml ; then 
-    sed -i 's|<category id="plc_net">| <category id="plc_rt">\n <name>RT Configuration</name>\n <description>RT</description>\n <variablelist>\n <variable id="enabled" type="boolean">\n <name>Enabled</name>\n <value>false</value>\n <description>Enable on this machine.</description>\n </variable>\n <variable id="host" type="hostname">\n <name>Hostname</name>\n <value>localhost.localdomain</value>\n <description>The fully qualified hostname.</description>\n </variable>\n <variable id="ip" type="ip">\n <name>IP Address</name>\n <value/>\n <description>The IP address of the RT server.</description>\n </variable>\n </variablelist>\n </category>\n <category id="plc_net">|' /etc/planetlab/default_config.xml
+    sed -i 's|<category id="plc_net">| <category id="plc_rt">\n <name>RT Configuration</name>\n <description>RT</description>\n <variablelist>\n <variable id="enabled" type="boolean">\n <name>Enabled</name>\n <value>false</value>\n <description>Enable on this machine.</description>\n </variable>\n <variable id="host" type="hostname">\n <name>Hostname</name>\n <value>localhost.localdomain</value>\n <description>The fully qualified hostname.</description>\n </variable>\n <variable id="ip" type="ip">\n <name>IP Address</name>\n <value/>\n <description>The IP address of the RT server.</description>\n </variable>\n <variable id="web_user" type="string">\n <name>username</name>\n <value>root</value>\n <description>The user name for RT access.</description>\n </variable>\n <variable id="web_password" type="password">\n <name>password</name>\n <value>password</value>\n <description>password to the rt user.</description>\n </variable>\n </variablelist>\n </category>\n <category id="plc_net">|' /etc/planetlab/default_config.xml
 fi
 
 mkdir -p /etc/planetlab/configs
-plc-config --save /etc/planetlab/configs/site.xml \
-		--category plc_rt --variable enabled --value true
+plc-config --category plc_rt --variable enabled --value true \
+    --save /etc/planetlab/configs/site.xml /etc/planetlab/default_config.xml
+
+# NOTE: setup default values until myplc includes them by default.
+plc-config --category plc_rt --variable host --value localhost.localdomain \
+	--save /etc/planetlab/configs/site.xml /etc/planetlab/configs/site.xml 
+plc-config --category plc_rt --variable ip --value "" \
+	--save /etc/planetlab/configs/site.xml /etc/planetlab/configs/site.xml 
+plc-config --category plc_rt --variable web_user --value root \
+	--save /etc/planetlab/configs/site.xml /etc/planetlab/configs/site.xml 
+plc-config --category plc_rt --variable web_password --value password \
+	--save /etc/planetlab/configs/site.xml /etc/planetlab/configs/site.xml 
+
 
 mkdir -p /var/log/rt3
 touch /var/log/rt3/rt.log

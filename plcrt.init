@@ -73,6 +73,11 @@ function check_rt_siteconfig ()
 	for f in $PLCRTPATH/conf.d/*.pl ; do 
 		update_config PLC_RT_HOSTNAME $PLC_RT_HOST $f
 	done
+
+	# TODO: need a better approach for this.
+	if [ -f /etc/httpd/conf.d/rt3.conf ] ; then
+		update_config PLC_RT_HOST $PLC_RT_HOST /etc/httpd/conf.d/rt3.conf
+	fi
 	
 	# if the templates are newer than the actual config, then replace them.
 	if [ $PLCRTPATH/RT_SiteConfig.pm -nt /etc/rt3/RT_SiteConfig.pm ] ;
@@ -115,6 +120,7 @@ function check_rt_pghba ()
 	USER=$RT3_DB_USER
 	CONF=$PGDATA/pg_hba.conf.d/${NAME}.conf
 	PATTERN="host all postgres 127.0.0.1/32 trust"
+	PATTERN="host all postgres $PLC_RT_IP/32 trust"
 
 	if ! grep -q "$PATTERN" $CONF ; then
 		#### SETUP ACCESS from postgres user to run init for the first time.
@@ -211,6 +217,9 @@ case "$1" in
 		check_pg_hba $RT3_DB_NAME $RT3_DB_USER
 		#check_user_and_db $RT3_DB_NAME $RT3_DB_USER
 		check_rt_siteconfig
+		# TODO: make this dependent on whether a change was made!
+		service plc restart httpd
+
 		check_rt_pghba
 		if [ -n "$WROTE_PG_CONFIG" ] ; then
 			# NOTE: restart db to enable access by users granted above.
@@ -222,6 +231,8 @@ case "$1" in
 		check_rt_init
 		check_rt_sendmail
 		check_rt_custom		# todo: restart httpd if needed.
+
+		# TODO: remove external permission
 
 		result "$MESSAGE"
 	;;
@@ -237,7 +248,6 @@ case "$1" in
 		dropuser -U postgres $RT3_DB_USER
 		rm -f /etc/rt3/RT_SiteConfig.pm
 		rm -f /etc/rt3/initialdata
-		PATTERN="host all postgres 127.0.0.1/32 trust"
 		rm -f $PGDATA/pg_hba.conf.d/${RT3_DB_NAME}.conf
 
 		sed -i -e "s/.*mailgate.*//g" /etc/aliases
