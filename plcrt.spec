@@ -69,7 +69,8 @@ if grep 'pam_loginuid.so' /etc/pam.d/crond ; then
 fi
 
 if ! grep '<category id="plc_rt">' /etc/planetlab/default_config.xml ; then 
-    sed -i 's|<category id="plc_net">| <category id="plc_rt">\n <name>RT Configuration</name>\n <description>RT</description>\n <variablelist>\n <variable id="enabled" type="boolean">\n <name>Enabled</name>\n <value>false</value>\n <description>Enable on this machine.</description>\n </variable>\n <variable id="host" type="hostname">\n <name>Hostname</name>\n <value>localhost.localdomain</value>\n <description>The fully qualified hostname.</description>\n </variable>\n <variable id="ip" type="ip">\n <name>IP Address</name>\n <value/>\n <description>The IP address of the RT server.</description>\n </variable>\n <variable id="web_user" type="string">\n <name>username</name>\n <value>root</value>\n <description>The user name for RT access.</description>\n </variable>\n <variable id="web_password" type="password">\n <name>password</name>\n <value>password</value>\n <description>password to the rt user.</description>\n </variable>\n </variablelist>\n </category>\n <category id="plc_net">|' /etc/planetlab/default_config.xml
+    sed -i 's|<category id="plc_net">| <category id="plc_rt">\n <name>RT Configuration</name>\n <description>RT</description>\n <variablelist>\n <variable id="enabled" type="boolean">\n <name>Enabled</name>\n <value>false</value>\n <description>Enable on this machine.</description>\n </variable>\n <variable id="host" type="hostname">\n <name>Hostname</name>\n <value>localhost.localdomain</value>\n <description>The fully qualified hostname.</description>\n </variable>\n <variable id="ip" type="ip">\n <name>IP Address</name>\n <value/>\n <description>The IP address of the RT server.</description>\n </variable>\n <variable id="web_user" type="string">\n <name>username</name>\n <value>root</value>\n <description>The user name for RT access.</description>\n </variable>\n <variable id="web_password" type="password">\n <name>password</name>\n <value>password</value>\n <description>password to the rt user.</description>\n </variable>\n 
+<variable id="dbpassword" type="password">\n <name>Database Password</name>\n <value></value>\n <description>Password to use when accessing the RT database.</description>\n </variable>\n </variablelist>\n </category>\n <category id="plc_net">|' /etc/planetlab/default_config.xml
 fi
 
 mkdir -p /etc/planetlab/configs
@@ -85,11 +86,15 @@ plc-config --category plc_rt --variable web_user --value root \
 	--save /etc/planetlab/configs/site.xml /etc/planetlab/configs/site.xml 
 plc-config --category plc_rt --variable web_password --value password \
 	--save /etc/planetlab/configs/site.xml /etc/planetlab/configs/site.xml 
+plc-config --category plc_rt --variable dbpassword --value "" \
+	--save /etc/planetlab/configs/site.xml /etc/planetlab/configs/site.xml 
 
-
+# NOTE: not sure why these aren't setup by the rt package...
 mkdir -p /var/log/rt3
 touch /var/log/rt3/rt.log
 chown apache.apache /var/log/rt3/rt.log
+
+cp /usr/share/rt3/html/NoAuth/images/bplogo.gif /var/www/html/misc/logo.gif
 
 %changelog
 * Sat Jul 04 2009 Stephen Soltesz <soltesz@cs.princeton.edu> - PLCRT-1.0-3

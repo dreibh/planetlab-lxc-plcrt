@@ -38,6 +38,17 @@ if [ -z "$PLC_RT_IP" ] ; then
 	PLC_RT_IP=$( gethostbyname $PLC_RT_HOST )
 fi
 
+function check_rt_password ()
+{
+    if [[ -z "$PLC_RT_DBPASSWORD" || "$PLC_RT_DBPASSWORD" = "None" ]] ; then
+        # NOTE: this provides a simpler string than uuidgen
+        PLC_RT_DBPASSWORD=$( uuidgen | md5sum - | awk '{print $1}' )
+        plc-config --category=plc_rt --variable=dbpassword --value="$PLC_RT_DBPASSWORD" --save=$local_config $local_config
+        service plc reload
+		CREATED="true"
+    fi
+}
+
 # NOTE: code duplicated from monitor.functions to allow package to be separate
 # 		from it.
 function check_pg_hba ()
@@ -71,7 +82,15 @@ function check_rt_siteconfig ()
 
 	# TODO: need a better approach for this.
 	for f in $PLCRTPATH/conf.d/*.pl ; do 
-		update_config PLC_RT_HOSTNAME $PLC_RT_HOST $f
+		mkdir -p /etc/rt3/conf.d
+		if [ $f -nt /etc/rt3/conf.d/`basename $f` ] ; then 
+			tmp_file=$(mktemp)
+			cp $f $tmp_file
+			update_config PLC_RT_HOSTNAME $PLC_RT_HOST $tmp_file
+
+			cp $tmp_file /etc/rt3/conf.d/`basename $f`
+			rm -f $tmp_file
+		fi
 	done
 
 	# TODO: need a better approach for this.
@@ -93,7 +112,7 @@ function check_rt_siteconfig ()
 
 		update_config RT_DB_NAME $RT3_DB_NAME $tmp_siteconfig
 		update_config RT_DB_USER $RT3_DB_USER $tmp_siteconfig
-		update_config RT_DB_PASSWORD $PLC_MONITOR_DBPASSWORD $tmp_siteconfig
+		update_config RT_DB_PASSWORD $PLC_RT_DBPASSWORD $tmp_siteconfig
 
 		# setup initialdata
 		update_config PLC_RT_HOSTNAME $PLC_RT_HOST $tmp_initialdata
@@ -120,8 +139,13 @@ function check_rt_pghba ()
 	USER=$RT3_DB_USER
 	CONF=$PGDATA/pg_hba.conf.d/${NAME}.conf
 	PATTERN="host all postgres 127.0.0.1/32 trust"
-	PATTERN="host all postgres $PLC_RT_IP/32 trust"
+	if ! grep -q "$PATTERN" $CONF ; then
+		#### SETUP ACCESS from postgres user to run init for the first time.
+		echo "$PATTERN" >> $CONF
+		WROTE_PG_CONFIG="true"
+	fi
 
+	PATTERN="host all postgres $PLC_RT_IP/32 trust"
 	if ! grep -q "$PATTERN" $CONF ; then
 		#### SETUP ACCESS from postgres user to run init for the first time.
 		echo "$PATTERN" >> $CONF
@@ -153,7 +177,7 @@ function check_rt_init ()
 {
 	if [ ! -f /etc/rt3/setup.finished ] ; then
 		/usr/sbin/rt-setup-database --action init --dba postgres
-		for f in $PLCRTPATH/conf.d/*.pl ; do 
+		for f in /etc/rt3/conf.d/*.pl ; do 
 			/usr/sbin/rt-setup-database --action insert --dba postgres --datafile $f
 		done
 
@@ -214,6 +238,7 @@ case "$1" in
 		MESSAGE=$"Bootstrap RT (please wait...)"
 		dialog "$MESSAGE"
 
+		check_rt_password
 		check_pg_hba $RT3_DB_NAME $RT3_DB_USER
 		#check_user_and_db $RT3_DB_NAME $RT3_DB_USER
 		check_rt_siteconfig
@@ -259,6 +284,7 @@ case "$1" in
 		dropuser -U postgres $RT3_DB_USER
 		rm -f /etc/rt3/RT_SiteConfig.pm
 		rm -f /etc/rt3/initialdata
+		rm -f /etc/rt3/conf.d/*.pl
 		rm -f $PGDATA/pg_hba.conf.d/${RT3_DB_NAME}.conf
 
 		sed -i -e "s/.*mailgate.*//g" /etc/aliases
