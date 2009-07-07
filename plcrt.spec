@@ -6,7 +6,7 @@
 
 %define name plcrt
 %define version 1.0
-%define taglevel 3
+%define taglevel 4
 
 %define release %{taglevel}%{?pldistro:.%{pldistro}}%{?date:.%{date}}
 
@@ -97,6 +97,11 @@ chown apache.apache /var/log/rt3/rt.log
 cp /usr/share/rt3/html/NoAuth/images/bplogo.gif /var/www/html/misc/logo.gif
 
 %changelog
+* Mon Jul 06 2009 Stephen Soltesz <soltesz@cs.princeton.edu> - PLCRT-1.0-4
+- rt db password
+- template conf.d/* files rather than one-shot re-write
+- better %post in spec file for logo and default xml settings.
+
 * Sat Jul 04 2009 Stephen Soltesz <soltesz@cs.princeton.edu> - PLCRT-1.0-3
 - renamed getpersons.py to accept a given 'role'
 - changed syncadmins.sh to use callplcsh.py
