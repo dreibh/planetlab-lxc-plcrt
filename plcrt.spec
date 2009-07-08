@@ -6,7 +6,7 @@
 
 %define name plcrt
 %define version 1.0
-%define taglevel 4
+%define taglevel 5
 
 %define release %{taglevel}%{?pldistro:.%{pldistro}}%{?date:.%{date}}
 
@@ -100,6 +100,11 @@ chown apache.apache /var/log/rt3/rt.log
 cp /usr/share/rt3/html/NoAuth/images/bplogo.gif /var/www/html/misc/logo.gif
 
 %changelog
+* Wed Jul 08 2009 Stephen Soltesz <soltesz@cs.princeton.edu> - PLCRT-1.0-5
+- add mailing list watchers to default queues
+- add script to addwatchers to default queues
+- improved templates in plcrt.init
+
 * Mon Jul 06 2009 Stephen Soltesz <soltesz@cs.princeton.edu> - PLCRT-1.0-4
 - rt db password
 - template conf.d/* files rather than one-shot re-write
