@@ -74,22 +74,45 @@ function update_config ()
 	file=$3
 	sed -i -e "s/$pattern/$with/g" $file
 }
-
-function check_rt_siteconfig ()
+function apply_template ()
 {
-	tmp_siteconfig=$(mktemp)
-	tmp_initialdata=$(mktemp)
+	TEMPLATE=$1
+	DESTFILE=$2
 
-	# TODO: need a better approach for this.
+	tmp_file=$(mktemp)
+	cp $TEMPLATE $tmp_file
+	update_config PLC_RT_HOSTNAME $PLC_RT_HOST $tmp_file
+	update_config PLC_RT_CC_ADDRESS $PLC_RT_CC_ADDRESS $tmp_file
+
+	update_config PLC_NAME "$PLC_NAME" $tmp_file
+	update_config PLC_RT_HOSTNAME $PLC_RT_HOST $tmp_file
+	update_config PLC_WWW_HOSTNAME $PLC_WWW_HOST $tmp_file
+
+	update_config RT_DB_NAME $RT3_DB_NAME $tmp_file
+	update_config RT_DB_USER $RT3_DB_USER $tmp_file
+	update_config RT_DB_PASSWORD $PLC_RT_DBPASSWORD $tmp_file
+
+	# setup initialdata
+	update_config PLC_RT_HOSTNAME $PLC_RT_HOST $tmp_file
+
+	cp $tmp_file $DESTFILE
+	rm -f $tmp_file
+}
+
+function check_rt_templates ()
+{
 	for f in $PLCRTPATH/conf.d/*.pl ; do 
 		mkdir -p /etc/rt3/conf.d
 		if [ $f -nt /etc/rt3/conf.d/`basename $f` ] ; then 
-			tmp_file=$(mktemp)
-			cp $f $tmp_file
-			update_config PLC_RT_HOSTNAME $PLC_RT_HOST $tmp_file
+			apply_template $f /etc/rt3/conf.d/`basename $f`
+		fi
+	done
 
-			cp $tmp_file /etc/rt3/conf.d/`basename $f`
-			rm -f $tmp_file
+	for f in $PLCRTPATH/setup.d/*.{pl,py,sh} ; do 
+		mkdir -p /etc/rt3/setup.d
+		if [ $f -nt /etc/rt3/setup.d/`basename $f` ] ; then 
+			apply_template $f /etc/rt3/setup.d/`basename $f`
+			chmod 751 /etc/rt3/setup.d/`basename $f`
 		fi
 	done
 
@@ -102,29 +125,10 @@ function check_rt_siteconfig ()
 	if [ $PLCRTPATH/RT_SiteConfig.pm -nt /etc/rt3/RT_SiteConfig.pm ] ;
 	then
 		# copy templates
-		cp -f $PLCRTPATH/RT_SiteConfig.pm $tmp_siteconfig
-		cp -f $PLCRTPATH/initialdata $tmp_initialdata
-
-		# setup RT_SiteConfig.pm
-		update_config PLC_NAME "$PLC_NAME" $tmp_siteconfig
-		update_config PLC_RT_HOSTNAME $PLC_RT_HOST $tmp_siteconfig
-		update_config PLC_WWW_HOSTNAME $PLC_WWW_HOST $tmp_siteconfig
-
-		update_config RT_DB_NAME $RT3_DB_NAME $tmp_siteconfig
-		update_config RT_DB_USER $RT3_DB_USER $tmp_siteconfig
-		update_config RT_DB_PASSWORD $PLC_RT_DBPASSWORD $tmp_siteconfig
-
-		# setup initialdata
-		update_config PLC_RT_HOSTNAME $PLC_RT_HOST $tmp_initialdata
-
-		# copy to live configuration
-		cp -f $tmp_siteconfig /etc/rt3/RT_SiteConfig.pm 
-		cp -f $tmp_initialdata /etc/rt3/initialdata 
+		apply_template $PLCRTPATH/RT_SiteConfig.pm /etc/rt3/RT_SiteConfig.pm
+		apply_template $PLCRTPATH/initialdata /etc/rt3/initialdata
 		chmod 644 /etc/rt3/RT_SiteConfig.pm 
 		chmod 644 /etc/rt3/initialdata 
-
-		rm -f $tmp_siteconfig
-		rm -f $tmp_initialdata
 	fi
 }
 
@@ -177,14 +181,17 @@ function check_rt_init ()
 {
 	if [ ! -f /etc/rt3/setup.finished ] ; then
 		/usr/sbin/rt-setup-database --action init --dba postgres
+
 		for f in /etc/rt3/conf.d/*.pl ; do 
 			/usr/sbin/rt-setup-database --action insert --dba postgres --datafile $f
 		done
 
 		# run initial setup scripts (run only once, or for the first time)
-		if [ -d $PLCRTPATH/setup.d ] ; then 
-			for f in $PLCRTPATH/setup.d/*.{pl,py,sh} ; do 
-				$f
+		if [ -d /etc/rt3/setup.d ] ; then 
+			for f in /etc/rt3/setup.d/*.{pl,py,sh} ; do 
+				if [ -x $f ] ; then 
+					$f
+				fi
 			done
 		fi
 
@@ -241,7 +248,7 @@ case "$1" in
 		check_rt_password
 		check_pg_hba $RT3_DB_NAME $RT3_DB_USER
 		#check_user_and_db $RT3_DB_NAME $RT3_DB_USER
-		check_rt_siteconfig
+		check_rt_templates
 		# TODO: make this dependent on whether a change was made!
 		service plc restart httpd
 
