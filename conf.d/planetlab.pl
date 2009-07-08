@@ -1,4 +1,25 @@
 
+@Users = (
+	{	Name         => 'Support Watch List',
+		Gecos        => 'support watch list',
+		RealName     => 'supportwatchlist',
+		Password     => '',
+		EmailAddress => 'PLC_RT_CC_ADDRESS',
+		Comments     => '',
+		Privileged   => '1', } );
+
+# These addresses all use the same email but it can easily be changed within RT
+@Watchers = (
+	{	Queue => 'support',
+		Watchers   => [ {Email => 'PLC_RT_CC_ADDRESS', Type => 'AdminCC',} ] },
+	{	Queue => 'monitor',
+		Watchers   => [ {Email => 'PLC_RT_CC_ADDRESS', Type => 'AdminCC',} ] },
+	{	Queue => 'legal',
+		Watchers   => [ {Email => 'PLC_RT_CC_ADDRESS', Type => 'AdminCC',} ] },
+	{	Queue => 'security',
+		Watchers   => [ {Email => 'PLC_RT_CC_ADDRESS', Type => 'AdminCC',} ] },
+);
+
 @ACL = (
 	{ GroupDomain => 'SystemInternal',
 	  GroupType => 'Everyone',
