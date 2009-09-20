@@ -6,7 +6,7 @@
 
 %define name plcrt
 %define version 1.0
-%define taglevel 5
+%define taglevel 6
 
 %define release %{taglevel}%{?pldistro:.%{pldistro}}%{?date:.%{date}}
 
@@ -102,6 +102,11 @@ chown apache.apache /var/log/rt3/rt.log
 cp /usr/share/rt3/html/NoAuth/images/bplogo.gif /var/www/html/misc/logo.gif
 
 %changelog
+* Sat Sep 19 2009 Stephen Soltesz <soltesz@cs.princeton.edu> - PLCRT-1.0-6
+- some plcs don't return site_ids so getpersons should not depend on this field
+- make scripts exec on install
+- use RT_HOST name rather than localhost for RT mailgate configuration
+
 * Wed Jul 08 2009 Stephen Soltesz <soltesz@cs.princeton.edu> - PLCRT-1.0-5
 - add mailing list watchers to default queues
 - add script to addwatchers to default queues
