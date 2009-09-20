@@ -6,7 +6,7 @@
 
 %define name plcrt
 %define version 1.0
-%define taglevel 6
+%define taglevel 7
 
 %define release %{taglevel}%{?pldistro:.%{pldistro}}%{?date:.%{date}}
 
@@ -102,6 +102,9 @@ chown apache.apache /var/log/rt3/rt.log
 cp /usr/share/rt3/html/NoAuth/images/bplogo.gif /var/www/html/misc/logo.gif
 
 %changelog
+* Sun Sep 20 2009 Stephen Soltesz <soltesz@cs.princeton.edu> - PLCRT-1.0-7
+- replace callplcsh with simpler scripts for syncing users
+
 * Sat Sep 19 2009 Stephen Soltesz <soltesz@cs.princeton.edu> - PLCRT-1.0-6
 - some plcs don't return site_ids so getpersons should not depend on this field
 - make scripts exec on install
