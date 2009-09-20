@@ -167,10 +167,10 @@ function check_rt_aliases ()
 		sed -i -e "s/^security.*root//g" /etc/aliases
         cat <<EOF >> /etc/aliases
 # added by RT init scripts for default queues.
-support: "|/usr/sbin/rt-mailgate --queue support --action correspond --url http://localhost/rt3/"
-monitor: "|/usr/sbin/rt-mailgate --queue monitor --action correspond --url http://localhost/rt3/"
-security: "|/usr/sbin/rt-mailgate --queue security --action correspond --url http://localhost/rt3/"
-legal: "|/usr/sbin/rt-mailgate --queue legal --action correspond --url http://localhost/rt3/"
+support: "|/usr/sbin/rt-mailgate --queue support --action correspond --url http://$PLC_RT_HOST/rt3/"
+monitor: "|/usr/sbin/rt-mailgate --queue monitor --action correspond --url http://$PLC_RT_HOST/rt3/"
+security: "|/usr/sbin/rt-mailgate --queue security --action correspond --url http://$PLC_RT_HOST/rt3/"
+legal: "|/usr/sbin/rt-mailgate --queue legal --action correspond --url http://$PLC_RT_HOST/rt3/"
 EOF
 		/usr/bin/newaliases
 	fi

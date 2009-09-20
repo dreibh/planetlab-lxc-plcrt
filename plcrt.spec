@@ -47,10 +47,12 @@ install -D -m 755 plcrt.init $RPM_BUILD_ROOT/%{_sysconfdir}/plc.d/plcrt
 echo " * Installing core scripts"
 rsync -a ./ $RPM_BUILD_ROOT/%{_datadir}/%{name}/
 
-echo " * Installing cron scripts"
 install -D -m 644 rt.cron $RPM_BUILD_ROOT/%{_sysconfdir}/cron.d/rt.cron
+install -D -m 755 getpersons.py $RPM_BUILD_ROOT/%{_datadir}/%{name}/getpersons.py
+install -D -m 755 callplcsh.py $RPM_BUILD_ROOT/%{_datadir}/%{name}/callplcsh.py
+install -D -m 755 adduserstort.pl $RPM_BUILD_ROOT/%{_datadir}/%{name}/adduserstort.pl
 
-chmod 755 $RPM_BUILD_ROOT/%{_datadir}/%{name}/adduserstort.pl
+echo " * Installing cron scripts"
 chmod 755 $RPM_BUILD_ROOT/%{_datadir}/%{name}/cron.d/*.sh
 
 %clean
