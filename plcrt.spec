@@ -6,7 +6,7 @@
 
 %define name plcrt
 %define version 1.0
-%define taglevel 7
+%define taglevel 8
 
 %define release %{taglevel}%{?pldistro:.%{pldistro}}%{?date:.%{date}}
 
@@ -101,6 +101,10 @@ chown apache.apache /var/log/rt3/rt.log
 cp /usr/share/rt3/html/NoAuth/images/bplogo.gif /var/www/html/misc/logo.gif
 
 %changelog
+* Mon Sep 21 2009 Stephen Soltesz <soltesz@cs.princeton.edu> - PLCRT-1.0-8
+- shorter polling period for faster sync
+- remove attempt to install removed file
+
 * Sun Sep 20 2009 Stephen Soltesz <soltesz@cs.princeton.edu> - PLCRT-1.0-7
 - replace callplcsh with simpler scripts for syncing users
 
