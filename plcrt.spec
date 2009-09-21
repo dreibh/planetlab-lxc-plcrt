@@ -41,22 +41,43 @@ or PlanetLab in particular.
 
 %install
 
+function install_file()
+{
+    mod=$1
+    dest=$2
+    file=$3
+    if [ -z "$file" ] ; then 
+        file=$( basename $dest )
+    fi
+    if [ -f $file ] ; then
+        install -D -m $mod $file $dest
+    fi
+}
+function chmod_pattern()
+{
+    mod=$1
+    pattern=$2
+    for file in $pattern ; do 
+        if [ -f $file ] ; then
+            chmod $mod $file
+        fi
+    done
+}
+
 install -d $RPM_BUILD_ROOT/%{_datadir}/%{name}
-install -D -m 755 plcrt.init $RPM_BUILD_ROOT/%{_sysconfdir}/plc.d/plcrt
+install_file 755 $RPM_BUILD_ROOT/%{_sysconfdir}/plc.d/plcrt plcrt.init
 
 echo " * Installing core scripts"
 rsync -a ./ $RPM_BUILD_ROOT/%{_datadir}/%{name}/
 
-install -D -m 644 rt.cron $RPM_BUILD_ROOT/%{_sysconfdir}/cron.d/rt.cron
-install -D -m 755 getpersons.py $RPM_BUILD_ROOT/%{_datadir}/%{name}/getpersons.py
-install -D -m 755 adduserstort.pl $RPM_BUILD_ROOT/%{_datadir}/%{name}/adduserstort.pl
+install_file 644 $RPM_BUILD_ROOT/%{_sysconfdir}/cron.d/rt.cron
+install_file 755 $RPM_BUILD_ROOT/%{_datadir}/%{name}/getpersons.py
+install_file 755 $RPM_BUILD_ROOT/%{_datadir}/%{name}/adduserstort.pl
 
 echo " * Installing cron scripts"
-for file in $RPM_BUILD_ROOT/%{_datadir}/%{name}/cron.d/*.py $RPM_BUILD_ROOT/%{_datadir}/%{name}/cron.d/*.sh ; do 
-	if [ -f $file ] ; then
-        chmod 755 $file
-	fi
-done
+chmod_pattern 755 $RPM_BUILD_ROOT/%{_datadir}/%{name}/cron.d/*.py 
+chmod_pattern 755 $RPM_BUILD_ROOT/%{_datadir}/%{name}/cron.d/*.sh
+
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -87,15 +108,15 @@ plc-config --category plc_rt --variable enabled --value true \
 
 # NOTE: setup default values until myplc includes them by default.
 plc-config --category plc_rt --variable host --value localhost.localdomain \
-	--save /etc/planetlab/configs/site.xml /etc/planetlab/configs/site.xml 
+    --save /etc/planetlab/configs/site.xml /etc/planetlab/configs/site.xml 
 plc-config --category plc_rt --variable ip --value "" \
-	--save /etc/planetlab/configs/site.xml /etc/planetlab/configs/site.xml 
+    --save /etc/planetlab/configs/site.xml /etc/planetlab/configs/site.xml 
 plc-config --category plc_rt --variable web_user --value root \
-	--save /etc/planetlab/configs/site.xml /etc/planetlab/configs/site.xml 
+    --save /etc/planetlab/configs/site.xml /etc/planetlab/configs/site.xml 
 plc-config --category plc_rt --variable web_password --value password \
-	--save /etc/planetlab/configs/site.xml /etc/planetlab/configs/site.xml 
+    --save /etc/planetlab/configs/site.xml /etc/planetlab/configs/site.xml 
 plc-config --category plc_rt --variable dbpassword --value "" \
-	--save /etc/planetlab/configs/site.xml /etc/planetlab/configs/site.xml 
+    --save /etc/planetlab/configs/site.xml /etc/planetlab/configs/site.xml 
 
 # NOTE: not sure why these aren't setup by the rt package...
 mkdir -p /var/log/rt3
