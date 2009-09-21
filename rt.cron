@@ -2,5 +2,5 @@ SHELL=/bin/bash
 PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin:/usr/share/plcrt
 HOME=/usr/share/plcrt
 
-01 * * * * root rtcron.sh
+*/5 * * * * root rtcron.sh
 
