@@ -52,7 +52,11 @@ install -D -m 755 getpersons.py $RPM_BUILD_ROOT/%{_datadir}/%{name}/getpersons.p
 install -D -m 755 adduserstort.pl $RPM_BUILD_ROOT/%{_datadir}/%{name}/adduserstort.pl
 
 echo " * Installing cron scripts"
-chmod 755 $RPM_BUILD_ROOT/%{_datadir}/%{name}/cron.d/*.sh
+for file in $RPM_BUILD_ROOT/%{_datadir}/%{name}/cron.d/*.py $RPM_BUILD_ROOT/%{_datadir}/%{name}/cron.d/*.sh ; do 
+	if [ -f $file ] ; then
+        chmod 755 $file
+	fi
+done
 
 %clean
 rm -rf $RPM_BUILD_ROOT
