@@ -6,7 +6,7 @@
 
 %define name plcrt
 %define version 1.0
-%define taglevel 8
+%define taglevel 9
 
 %define release %{taglevel}%{?pldistro:.%{pldistro}}%{?date:.%{date}}
 
@@ -105,6 +105,9 @@ chown apache.apache /var/log/rt3/rt.log
 cp /usr/share/rt3/html/NoAuth/images/bplogo.gif /var/www/html/misc/logo.gif
 
 %changelog
+* Mon Sep 21 2009 Stephen Soltesz <soltesz@cs.princeton.edu> - PLCRT-1.0-9
+- be more selective about which files to chmod
+
 * Mon Sep 21 2009 Stephen Soltesz <soltesz@cs.princeton.edu> - PLCRT-1.0-8
 - shorter polling period for faster sync
 - remove attempt to install removed file
