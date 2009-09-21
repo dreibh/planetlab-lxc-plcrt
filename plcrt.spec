@@ -49,7 +49,6 @@ rsync -a ./ $RPM_BUILD_ROOT/%{_datadir}/%{name}/
 
 install -D -m 644 rt.cron $RPM_BUILD_ROOT/%{_sysconfdir}/cron.d/rt.cron
 install -D -m 755 getpersons.py $RPM_BUILD_ROOT/%{_datadir}/%{name}/getpersons.py
-install -D -m 755 callplcsh.py $RPM_BUILD_ROOT/%{_datadir}/%{name}/callplcsh.py
 install -D -m 755 adduserstort.pl $RPM_BUILD_ROOT/%{_datadir}/%{name}/adduserstort.pl
 
 echo " * Installing cron scripts"
