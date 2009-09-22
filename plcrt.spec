@@ -6,7 +6,7 @@
 
 %define name plcrt
 %define version 1.0
-%define taglevel 9
+%define taglevel 10
 
 %define release %{taglevel}%{?pldistro:.%{pldistro}}%{?date:.%{date}}
 
@@ -126,6 +126,10 @@ chown apache.apache /var/log/rt3/rt.log
 cp /usr/share/rt3/html/NoAuth/images/bplogo.gif /var/www/html/misc/logo.gif
 
 %changelog
+* Mon Sep 21 2009 Stephen Soltesz <soltesz@cs.princeton.edu> - PLCRT-1.0-10
+- add reverse-lookup on given host IP addr to add any extra hostnames this
+- server may be aliasing as.
+
 * Mon Sep 21 2009 Stephen Soltesz <soltesz@cs.princeton.edu> - PLCRT-1.0-9
 - be more selective about which files to chmod
 
