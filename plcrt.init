@@ -17,6 +17,12 @@ local_config=/etc/planetlab/configs/site.xml
 
 PLCRTPATH=/usr/share/plcrt
 
+function gethostbyaddr ()
+{
+    python -c 'import socket; import sys; print socket.gethostbyaddr(sys.argv[1])[0]' $1 2>/dev/null
+}
+
+
 # Be verbose
 set -x
 
@@ -228,6 +234,11 @@ check_rt_sendmail ()
 		if ! grep "$PLC_RT_HOST" /etc/mail/local-host-names ; then
 			# edit /etc/mail/local-host-names
 			echo "$PLC_RT_HOST" >> /etc/mail/local-host-names
+			IP=$( gethostbyname $PLC_RT_HOST )
+			REVHOST=$( gethostbyaddr $IP )
+			if [ -n "$REVHOST" ] ; then 
+			    echo "$REVHOST" >> /etc/mail/local-host-names
+			fi
 		fi
 		m4 /etc/mail/sendmail.mc > /etc/mail/sendmail.cf
 		service sendmail restart
