@@ -222,28 +222,30 @@ check_rt_sendmail ()
 		# copy to live configuration
 		cp -f $tmp_sendmailmc /etc/mail/sendmail.mc
 		rm -f $tmp_sendmailmc
-
-		# edit /etc/mail/access to add local IP
-		if ! grep "$PLC_RT_IP" /etc/mail/access ; then
-			echo "$PLC_RT_IP		RELAY" >> /etc/mail/access
-			makemap hash /etc/mail/access.db < /etc/mail/access
-		fi
-		if [ !  -f /etc/smrsh/rt-mailgate ] ; then
-			ln -s /usr/sbin/rt-mailgate /etc/smrsh/rt-mailgate
-		fi
-		if ! grep "$PLC_RT_HOST" /etc/mail/local-host-names ; then
-			# edit /etc/mail/local-host-names
-			echo "$PLC_RT_HOST" >> /etc/mail/local-host-names
-			IP=$( gethostbyname $PLC_RT_HOST )
-			REVHOST=$( gethostbyaddr $IP )
-			if [ -n "$REVHOST" ] ; then 
-			    echo "$REVHOST" >> /etc/mail/local-host-names
-			fi
-		fi
-		m4 /etc/mail/sendmail.mc > /etc/mail/sendmail.cf
-		service sendmail restart
 	fi
 
+	# edit /etc/mail/access to add local IP
+	if ! grep "$PLC_RT_IP" /etc/mail/access ; then
+		echo "$PLC_RT_IP		RELAY" >> /etc/mail/access
+		makemap hash /etc/mail/access.db < /etc/mail/access
+	fi
+
+	if [ !  -f /etc/smrsh/rt-mailgate ] ; then
+		ln -s /usr/sbin/rt-mailgate /etc/smrsh/rt-mailgate
+	fi
+
+	# TODO: fix this to only append the hostnaen once, rather than appending
+	if ! grep "$PLC_RT_HOST" /etc/mail/local-host-names ; then
+		# edit /etc/mail/local-host-names
+		echo "$PLC_RT_HOST" >> /etc/mail/local-host-names
+		IP=$( gethostbyname $PLC_RT_HOST )
+		REVHOST=$( gethostbyaddr $IP )
+		if [ -n "$REVHOST" ] ; then 
+		    echo "$REVHOST" >> /etc/mail/local-host-names
+		fi
+	fi
+	m4 /etc/mail/sendmail.mc > /etc/mail/sendmail.cf
+	service sendmail restart
 
 }
 
